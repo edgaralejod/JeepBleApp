@@ -1,0 +1,16 @@
+<div padding *ngIf="showSpinnerScan" ><ion-spinner name="crescent"></ion-spinner></div>
+<div>
+  <div *ngFor="let device of devicesArray" (click)="deviceTapped(device)" >
+    <ion-card>
+      <ion-card-header >
+        {{device.localName}}
+      </ion-card-header>
+    </ion-card>
+  </div>
+  <ion-button  expand="block" (click)="scanDevices()">
+    <ion-icon name="bluetooth">  </ion-icon>Scan for devices
+  </ion-button>
+  <ion-button  expand="block" (click)="stopScan()">
+    <ion-icon name="hand-right-outline"></ion-icon>Stop Scan
+  </ion-button>
+</div>
