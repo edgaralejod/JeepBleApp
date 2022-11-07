@@ -1,3 +1,26 @@
-<p>
-  ble-controller works!
-</p>
+<div padding *ngIf="showSpinner" ><ion-spinner name="crescent"></ion-spinner></div>
+<div>
+  <ion-card>
+    <ion-card-header>
+    <ion-card-title>Available Functions</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item>
+          <ion-button (click)="ping()">Ping</ion-button>
+        </ion-item>
+        <ion-item>
+          <ion-button (click)="readId()">Read Id</ion-button>
+        </ion-item>
+        <ion-item>
+          <ion-button (click)="readConfig()">Read Config</ion-button>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button  (click)="disconnect()">
+      <ion-icon name="hand"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</div>

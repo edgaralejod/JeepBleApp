@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { Tab3Page } from './tab3.page';
 import { ExploreContainerComponentModule } from '../explore-container/explore-container.module';
 import { BleConnectComponent } from '../components/ble-connect/ble-connect.component';
+import { BleControllerComponent } from '../components/ble-controller/ble-controller.component';
 import { Tab3PageRoutingModule } from './tab3-routing.module';
 
 @NgModule({
@@ -17,7 +18,8 @@ import { Tab3PageRoutingModule } from './tab3-routing.module';
   ],
   declarations: [
     Tab3Page,
-    BleConnectComponent
+    BleConnectComponent,
+    BleControllerComponent
   ]
 })
 export class Tab3PageModule {}

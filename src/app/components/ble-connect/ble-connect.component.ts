@@ -20,11 +20,7 @@ export class BleConnectComponent implements OnInit, OnDestroy {
     console.log('We initialized the ble-connect component');
     if ( this.bleService.isInitialized == false ) {
       this.bleService.initializeBLE();
-      this.bleService.getBleObservable().subscribe((result) => {
-        this.ngZone.run(() => {
-          this.deviceFound(result);
-        });
-      });
+      this.bleService.getBleObservable().subscribe(this.deviceFound.bind(this));
     }
   }
 
@@ -39,10 +35,12 @@ export class BleConnectComponent implements OnInit, OnDestroy {
   stopScan() {
     this.bleService.stopScanProcess();
   }
-  
+
   deviceFound( device:ScanResult ) {
     console.log("Device found in ble-connect component", device.localName);
-    this.devicesArray.push(device);
+    this.ngZone.run(() => {
+      this.devicesArray.push(device);
+    });
   }
   
   deviceTapped( device:ScanResult ) {
