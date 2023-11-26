@@ -25,6 +25,7 @@ export class BleControllerComponent implements OnInit {
       command : 'rdid'
     };
     await this.bleService.bleTxProcess(JSON.stringify(readIdCmd));
+    await this.bleService.bleRead();
   }
 
   readConfig() {

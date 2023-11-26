@@ -12,9 +12,11 @@ import { Subject } from 'rxjs';
 export class BleService {
   public isInitialized = false;
   readonly controllerServiceUUID = "0492fcec-7194-11eb-9439-0242ac130002".toUpperCase();
-  private subject: Subject<any> = new Subject<any>();
+  private foundDevicesubject: Subject<ScanResult> = new Subject<ScanResult>();
+  private bleDataSubject: Subject<DataView> = new Subject<DataView>();
   private bluetoothConnectedDevice?: ScanResult;
-  private writeServiceUUID = "0492fcec-7194-11eb-9439-0242ac130003".toUpperCase();
+  private controlServiceUUID = "0492fcec-7194-11eb-9439-0242ac130003".toUpperCase();
+
   constructor(
   ) { 
     console.log("Constructor of ble.service.ts");
@@ -46,11 +48,15 @@ export class BleService {
 
   onScanFoundDevice(result:ScanResult) {
     console.log('received new scan result', result);
-    this.subject.next(result);
+    this.foundDevicesubject.next(result);
   }
 
-  getBleObservable():Subject<any> {
-    return this.subject;
+  getFoundDeviceSubject():Subject<ScanResult> {
+    return this.foundDevicesubject;
+  }
+
+  getBleDataSubject():Subject<DataView> {
+    return this.bleDataSubject;
   }
 
   async connectToDevice(scanResult:ScanResult) {
@@ -58,7 +64,7 @@ export class BleService {
     try {
       await BleClient.connect(
         device.deviceId,
-        this.onBluetoothDeviceConnected.bind(this)
+        this.onBleDeviceConnected.bind(this)
       );
       this.bluetoothConnectedDevice = scanResult;
     } catch(error) {
@@ -66,8 +72,33 @@ export class BleService {
     }
   }
 
-  onBluetoothDeviceConnected(result:any) {
-    console.log('Disconnected from device', result);
+  onBleDeviceConnected(result:any) {
+    console.log('Connected from device', result);
+    BleClient.startNotifications(
+      this.bluetoothConnectedDevice.device.deviceId,
+      this.controllerServiceUUID,
+      this.controlServiceUUID,
+      this.onBleNotificationReceived.bind(this)
+    );
+  }
+
+  async bleRead() {
+    await BleClient.read(
+      this.bluetoothConnectedDevice.device.deviceId,
+      this.controllerServiceUUID,
+      this.controlServiceUUID
+    ).then( ( result:DataView ) =>
+    {
+      console.log("Read result", result);
+      this.bleDataSubject.next(result);
+    }).catch( (error) =>  
+    {
+      console.log("Read error", error);
+    });
+  }
+  
+  onBleNotificationReceived(result:any) {
+    console.log('Received data from device', result);
   }
 
   async bleTxProcess(txstring: string) {
@@ -92,7 +123,7 @@ export class BleService {
     await BleClient.write(
       this.bluetoothConnectedDevice.device.deviceId,
       this.controllerServiceUUID,
-      this.writeServiceUUID,
+      this.controlServiceUUID,
       bytes
     ).then( (result) => 
     {

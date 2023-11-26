@@ -20,7 +20,7 @@ export class BleConnectComponent implements OnInit, OnDestroy {
     console.log('We initialized the ble-connect component');
     if ( this.bleService.isInitialized == false ) {
       this.bleService.initializeBLE();
-      this.bleService.getBleObservable().subscribe(this.deviceFound.bind(this));
+      this.bleService.getFoundDeviceSubject().subscribe(this.deviceFound.bind(this));
     }
   }
 
